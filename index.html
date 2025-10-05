@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Information</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      margin: 40px;
+    }
+    h1 {
+      color: #333;
+    }
+    button {
+      padding: 8px 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #second-employee-info {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background-color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <h1>Employee Information</h1>
+  <button onclick="getSecondEmployee()">Get Second Employee's Info</button>
+
+  <h2>Second Employee's Data:</h2>
+  <div id="second-employee-info"></div>
+
+  <script>
+    // Load XML file using Fetch API
+    function loadXML() {
+      return fetch('practInternal.xml')
+        .then(response => {
+          if (!response.ok) throw new Error("XML file not found!");
+          return response.text();
+        })
+        .then(str => {
+          const parser = new DOMParser();
+          return parser.parseFromString(str, "application/xml");
+        });
+    }
+
+    // Display second employee's data
+    function getSecondEmployee() {
+      loadXML()
+        .then(xmlDoc => {
+          const employees = xmlDoc.getElementsByTagName("employee");
+
+          if (employees.length >= 2) {
+            const emp = employees[1]; // 2nd employee
+
+            const id = emp.getElementsByTagName("id")[0].textContent;
+            const name = emp.getElementsByTagName("name")[0].textContent;
+            const department = emp.getElementsByTagName("department")[0].textContent;
+            const designation = emp.getElementsByTagName("designation")[0].textContent;
+            const email = emp.getElementsByTagName("email")[0].textContent;
+            const salary = emp.getElementsByTagName("salary")[0].textContent;
+
+            document.getElementById("second-employee-info").innerHTML = `
+              <p><strong>ID:</strong> ${id}</p>
+              <p><strong>Name:</strong> ${name}</p>
+              <p><strong>Department:</strong> ${department}</p>
+              <p><strong>Designation:</strong> ${designation}</p>
+              <p><strong>Email:</strong> ${email}</p>
+              <p><strong>Salary:</strong> ${salary}</p>
+            `;
+          } else {
+            alert("Less than 2 employees in data.");
+          }
+        })
+        .catch(err => {
+          console.error("Error:", err);
+          alert("Unable to load XML file.");
+        });
+    }
+  </script>
+</body>
+</html>
